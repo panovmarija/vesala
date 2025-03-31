@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import transfer.KlijentZahtev;
@@ -40,7 +41,7 @@ public class Komunikacija extends Thread{
             ObjectInputStream ois=new ObjectInputStream(s.getInputStream());
             return (ServerOdg) ois.readObject();
         } catch (IOException ex) {
-            Logger.getLogger(Komunikacija.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("prekinuta veza");
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(Komunikacija.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -58,33 +59,44 @@ public class Komunikacija extends Thread{
 
     @Override
     public void run() {
-        while(true)
+        ServerOdg so;
+        while((so=procitajOdg())!=null)
         {
-            ServerOdg so=procitajOdg();
-            switch (so.getOperacija()) {
+             switch (so.getOperacija()) {
                 case operacije.Operacije.pocela_igra:
-                    kontroler.Kontroler.getInstance().getKf().pocelaIgra();
+                    kontroler.Kontroler.getInstance().getKf().obavesti("pocela igra");
                     break;
                 case operacije.Operacije.pogadja_slovo:
-                    int poz=(int) so.getOdg();
-                    kontroler.Kontroler.getInstance().getKf().postaviSlovo(poz);
+                    List<Integer>pogodjena_mesta= (List<Integer>) so.getOdg();
+                    kontroler.Kontroler.getInstance().getKf().postaviSlovo(pogodjena_mesta);
                     break;
                 case operacije.Operacije.pobedio_komp:
-                    kontroler.Kontroler.getInstance().getKf().pobedio_komp();
+                    kontroler.Kontroler.getInstance().getKf().obavesti("pobedio komp");
                     break;
                 case operacije.Operacije.izjednaceno:
-                    kontroler.Kontroler.getInstance().getKf().izjednaceno();
+                    kontroler.Kontroler.getInstance().getKf().obavesti("izjednaceno");
                     break;
                 case operacije.Operacije.pobedio_A:
-                    kontroler.Kontroler.getInstance().getKf().pobedio_A();
+                    kontroler.Kontroler.getInstance().getKf().obavesti("pobedio A");
                     break;
                 case operacije.Operacije.pobedio_B:
-                    kontroler.Kontroler.getInstance().getKf().pobedio_B();
+                    kontroler.Kontroler.getInstance().getKf().obavesti("pobedio B");
                     break;
                 default:
                     throw new AssertionError();
             }
         }
+        System.out.println(s.isClosed());
+        if(s!=null && !s.isClosed())
+        {
+            try {
+                s.close();
+            } catch (IOException ex) {
+                Logger.getLogger(Komunikacija.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        System.out.println(s.isClosed());
+        System.out.println("zatvoren soket");
     }
     
     

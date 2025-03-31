@@ -19,7 +19,8 @@ public class KlijentForma extends javax.swing.JFrame {
      * Creates new form KlijentForma
      */
     private List<String>slova;
-    public static int brpok=10;
+    private int brpok=10;
+    private int brpog=0;
     public KlijentForma() {
         initComponents();
         kontroler.Kontroler.getInstance().setKf(this);
@@ -148,7 +149,8 @@ public class KlijentForma extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        if(brpok==0)return ;
+        if(brpok==0 || brpog==5)
+            return ;
         komunikacija.Komunikacija.getInstance().posaljiZahtev(new KlijentZahtev(operacije.Operacije.pogadja_slovo, jTextField_slovo.getText()));
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -186,11 +188,6 @@ public class KlijentForma extends javax.swing.JFrame {
             }
         });
     }
-
-    public void pocelaIgra() {
-        JOptionPane.showMessageDialog(this, "pocela igra");
-    }
-
  
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
@@ -206,13 +203,22 @@ public class KlijentForma extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField_slovo;
     // End of variables declaration//GEN-END:variables
 
-    public void postaviSlovo(int poz) {
-        if(poz==-1)
+    public void obavesti(String text)
+    {
+        JOptionPane.showMessageDialog(this, text);
+    }
+
+    public void postaviSlovo(List<Integer> pogodjena_mesta) {
+        brpog+=pogodjena_mesta.size();
+        if(pogodjena_mesta.isEmpty())
         {
             dodajUpokusane(jTextField_slovo.getText());
             return;
         }
+        for(int poz:pogodjena_mesta)
+        {
         dodajNaMesto(jTextField_slovo.getText(),poz);
+        }
         dodajUpokusane(jTextField_slovo.getText());
     }
 
@@ -246,19 +252,4 @@ public class KlijentForma extends javax.swing.JFrame {
         }
     }
 
-    public void pobedio_komp() {
-        JOptionPane.showMessageDialog(this, "pobedio komp");
-    }
-
-    public void izjednaceno() {
-        JOptionPane.showMessageDialog(this, "izjednaceno");
-    }
-
-    public void pobedio_B() {
-        JOptionPane.showMessageDialog(this, "pobedio_B");
-    }
-
-    public void pobedio_A() {
-        JOptionPane.showMessageDialog(this, "pobedio_A");
-    }
 }

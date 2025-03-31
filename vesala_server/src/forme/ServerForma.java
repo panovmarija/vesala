@@ -24,34 +24,9 @@ public class ServerForma extends javax.swing.JFrame {
         initComponents();
         setLocationRelativeTo(null);
         kontroler.Kontroler.getInstance().setSf(this);
-       double f = Math.random()/Math.nextDown(1.0);
-       double x = 0*(1.0 - f) + 5*f;
-       int br=(int)x;
-       rec=kontroler.Kontroler.getInstance().getReci()[br];
-       kontroler.Kontroler.getInstance().setRec(rec);
-//        String rec="aaaaa";
-//       kontroler.Kontroler.getInstance().setRec(rec);
-        System.out.println(rec);
-       jTextField1.setText(rec.charAt(0)+"");
-       jTextField2.setText(rec.charAt(1)+"");
-       jTextField3.setText(rec.charAt(2)+"");
-       jTextField4.setText(rec.charAt(3)+"");
-       jTextField5.setText(rec.charAt(4)+"");
-       jTextField1.setEnabled(false);
-       jTextField2.setEnabled(false);
-       jTextField3.setEnabled(false);
-       jTextField4.setEnabled(false);
-       jTextField5.setEnabled(false);
-       jTextField_apok.setEnabled(false);
-       jTextField_apog.setEnabled(false);
-       jTextField_bpok.setEnabled(false);
-       jTextField_bpog.setEnabled(false);
-       
-       jTextField_apog.setText("0");
-       jTextField_apok.setText("0");
-       jTextField_bpog.setText("0");
-       jTextField_bpok.setText("0");
-       p=new PokreniServer();
+        izaberiRec();
+        urediPolja();
+        p=new PokreniServer();
        p.start();
     }
 
@@ -275,19 +250,39 @@ public class ServerForma extends javax.swing.JFrame {
         jTextField_apok.setText(pok+"");
     }
 
-    public void pobedio_Komp() {
-        JOptionPane.showMessageDialog(this, "pobedio kompjuter");
+    private void izaberiRec() {
+       double f = Math.random()/Math.nextDown(1.0);
+       double x = 0*(1.0 - f) + 5*f;
+       int br=(int)x;
+       rec=kontroler.Kontroler.getInstance().getReci()[br];
+       kontroler.Kontroler.getInstance().setRec(rec);
+//       rec="aaaaa";
+       kontroler.Kontroler.getInstance().setRec(rec);
     }
 
-    public void izjednaceno() {
-        JOptionPane.showMessageDialog(this, "izjednaceno");
+    private void urediPolja() {
+       jTextField1.setText(rec.charAt(0)+"");
+       jTextField2.setText(rec.charAt(1)+"");
+       jTextField3.setText(rec.charAt(2)+"");
+       jTextField4.setText(rec.charAt(3)+"");
+       jTextField5.setText(rec.charAt(4)+"");
+       jTextField1.setEnabled(false);
+       jTextField2.setEnabled(false);
+       jTextField3.setEnabled(false);
+       jTextField4.setEnabled(false);
+       jTextField5.setEnabled(false);
+       jTextField_apok.setEnabled(false);
+       jTextField_apog.setEnabled(false);
+       jTextField_bpok.setEnabled(false);
+       jTextField_bpog.setEnabled(false);
+       
+       jTextField_apog.setText("0");
+       jTextField_apok.setText("0");
+       jTextField_bpog.setText("0");
+       jTextField_bpok.setText("0");
     }
 
-    public void pobedio_A() {
-        JOptionPane.showMessageDialog(this, "pobedio_A");
-    }
-
-    public void pobedioB() {
-        JOptionPane.showMessageDialog(this, "pobedioB");
+    public void obavesti(String text) {
+        JOptionPane.showMessageDialog(this, text);
     }
 }

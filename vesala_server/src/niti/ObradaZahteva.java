@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -21,6 +22,7 @@ import transfer.ServerOdg;
 public class ObradaZahteva extends Thread{
     private kontroler.Kontroler k=kontroler.Kontroler.getInstance();
     private Socket s;
+    private boolean flag=true;
     private int pok, pog=0;
     public ObradaZahteva(Socket s) {
         this.s = s;
@@ -31,28 +33,30 @@ public class ObradaZahteva extends Thread{
         KlijentZahtev kz;
 //        ServerOdg p=new ServerOdg(operacije.Operacije.pocela_igra);
 //        posaljiOdgovor(p);
-        while((kz=procitajZahtev())!=null)
+        while((kz=procitajZahtev())!=null && flag )
         {
             ServerOdg so=new ServerOdg();
             switch (kz.getOperacija()) {
                 case operacije.Operacije.pogadja_slovo:
                     String slovo=(String) kz.getParam();
-                    int odg=kontroler.Kontroler.getInstance().sadrzi_slovo(slovo, kontroler.Kontroler.getInstance().getKlijenti().indexOf(this));
-                    kontroler.Kontroler.getInstance().postaviStatistiku(kontroler.Kontroler.getInstance().getKlijenti().indexOf(this), ++pok, odg==-1?pog:++pog);
-                    so.setOdg(odg);//vraca indeks slova u reci, ako je pozicija vec pogodjena, vraca -1;
+//                    prvo rad u formi
+                    List <Integer> pogodjena_mesta=kontroler.Kontroler.getInstance().sadrzi_slovo(slovo, k.getKlijenti().indexOf(this));
+                    pok++;
+                    pog+=pogodjena_mesta.size();
+                    k.postaviStatistiku(k.getKlijenti().indexOf(this),pok,pog);
+                    System.out.println(pog);
+//                    slanje odgovora klijentu  
+                    so.setOdg(pogodjena_mesta);//vraca indeks slova u reci, ako je pozicija vec pogodjena, vraca -1;
                     so.setOperacija(operacije.Operacije.pogadja_slovo);
                     posaljiOdgovor(so);
-                    k.nadjiPobednika();
+//                    proverava da li ima pobednika, i ako ima prekida run oba klijenta i zatvara sokete
+                    if(k.nadjiPobednika()) k.zatvoriSoket();
                     break;
                 default:
                     throw new AssertionError();
             }
         }
-        if(s!=null && !s.isClosed())
-        {
-            try {s.close();} catch (IOException ex) {Logger.getLogger(ObradaZahteva.class.getName()).log(Level.SEVERE, null, ex);}
-        }
-        System.out.println(s.isClosed());
+        System.out.println(s.isClosed()+" "+pog);
         
     }
 
@@ -61,7 +65,7 @@ public class ObradaZahteva extends Thread{
             ObjectInputStream ois=new ObjectInputStream(s.getInputStream());
             return (KlijentZahtev) ois.readObject();
         } catch (IOException ex) {
-            System.out.println("klijent odvezan-zatvoren soket/forma/pad mreze");
+            System.out.println("klijent odvezan-zatvoren soket/forma/pad mreze"+pog);
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(ObradaZahteva.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -99,6 +103,14 @@ public class ObradaZahteva extends Thread{
 
     public void setPog(int pog) {
         this.pog = pog;
+    }
+
+    public boolean isFlag() {
+        return flag;
+    }
+
+    public void setFlag(boolean flag) {
+        this.flag = flag;
     }
     
 }

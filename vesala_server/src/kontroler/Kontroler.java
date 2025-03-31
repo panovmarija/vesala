@@ -5,8 +5,11 @@
 package kontroler;
 
 import forme.ServerForma;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import niti.ObradaZahteva;
 import transfer.ServerOdg;
 
@@ -19,7 +22,7 @@ public class Kontroler {
     private ServerForma sf;
     private List<ObradaZahteva>klijenti;
     private String rec;
-    private final String []reci=new String[]{"petao", "petak", "plava", "pilav", "corba"};
+    private final String []reci=new String[]{"pepeo", "patak", "kajak", "popaj", "batak"};
     private List<Integer>pogodjene_pozicijeB=new LinkedList<>();
     private List<Integer>pogodjene_pozicijeA=new LinkedList<>();
 
@@ -50,7 +53,8 @@ public class Kontroler {
         this.rec = rec;
     }
 
-    public int sadrzi_slovo(String slovo, int klijent) {
+    public List<Integer> sadrzi_slovo(String slovo, int klijent) {
+        List<Integer>pogodjena_mesta=new LinkedList<>();
         if(klijent==0)
         {
         for(int i=0;i<5;i++)
@@ -58,24 +62,25 @@ public class Kontroler {
             if((rec.charAt(i)+"").equalsIgnoreCase(slovo) && !pogodjene_pozicijeA.contains(i))
             {
                 pogodjene_pozicijeA.add(i);
-                return i;
+                pogodjena_mesta.add(i);
             }
         }
-        return -1;
+        return pogodjena_mesta;
         }
-                    for(int i=0;i<5;i++)
+        
+        for(int i=0;i<5;i++)
         {
             if((rec.charAt(i)+"").equalsIgnoreCase(slovo) && !pogodjene_pozicijeB.contains(i))
             {
                 pogodjene_pozicijeB.add(i);
-                return i;
+                pogodjena_mesta.add(i);
             }
         }
-         return -1;           
+         return pogodjena_mesta;           
     }
 
-    public void postaviStatistiku(int indexOf, int pok, int pog) {
-        if(indexOf==0)
+    public void postaviStatistiku(int klijent, int pok, int pog) {
+        if(klijent==0)
         {
             pokA=pok;
             pogA=pog;
@@ -85,7 +90,6 @@ public class Kontroler {
         pokB=pok;
         pogB=pog;
         sf.postaviB(pok,pog);
-               
     }
 
     public ServerForma getSf() {
@@ -96,47 +100,7 @@ public class Kontroler {
         this.sf = sf;
     }
 
-    public int getPokA() {
-        return pokA;
-    }
-
-    public void setPokA(int pokA) {
-        this.pokA = pokA;
-    }
-
-    public int getPokB() {
-        return pokB;
-    }
-
-    public void setPokB(int pokB) {
-        this.pokB = pokB;
-    }
-
-    public int getPogA() {
-        return pogA;
-    }
-
-    public void setPogA(int pogA) {
-        this.pogA = pogA;
-    }
-
-    public int getPogB() {
-        return pogB;
-    }
-
-    public void setPogB(int pogB) {
-        this.pogB = pogB;
-    }
-
-    public void pobedio_komp() {
-        for(ObradaZahteva o:klijenti)
-        {
-            o.posaljiOdgovor(new ServerOdg("", operacije.Operacije.pobedio_komp));
-        }
-        sf.pobedio_Komp();
-    }
-
-    public void nadjiPobednika() {
+    public boolean nadjiPobednika() {
             if(pogA==5 && pogB==5)
             {
                 if(pokA==pokB)
@@ -144,44 +108,61 @@ public class Kontroler {
                     for (ObradaZahteva o : klijenti) {
                         o.posaljiOdgovor(new ServerOdg("", operacije.Operacije.izjednaceno));
                     }
-                    sf.izjednaceno();
+                sf.obavesti("izjednaceno");
                 }
                 if(pokA<pokB)
                 {
                     for (ObradaZahteva o : klijenti) {
                         o.posaljiOdgovor(new ServerOdg("", operacije.Operacije.pobedio_A));
                     }
-                    sf.pobedio_A();
+                sf.obavesti("pobedio A");
                 }
-                else
+                if(pokA>pokB)
                 {
                     for (ObradaZahteva o : klijenti) {
                         o.posaljiOdgovor(new ServerOdg("", operacije.Operacije.pobedio_B));
                     }
-                    sf.pobedioB();
+                sf.obavesti("pobedio B");
                 }
-                return ;
+                return true;
             }
             if(pogA==5&& pokB==10)
             {
                 for (ObradaZahteva o : klijenti) {
                     o.posaljiOdgovor(new ServerOdg("", operacije.Operacije.pobedio_A));
                 }
-                sf.pobedio_A();
-                return ;
+                sf.obavesti("pobedio A");
+                return true;
             }
             if(pogB==5&& pokA==10)
             {
                 for (ObradaZahteva o : klijenti) {
                     o.posaljiOdgovor(new ServerOdg("", operacije.Operacije.pobedio_B));
                 }
-                sf.pobedioB();
-                return ;
+                sf.obavesti("pobedio B");
+                return true;
             }
             if(pokA==10 && pokB==10)
             {
-                pobedio_komp();
+                for (ObradaZahteva o : klijenti) {
+                    o.posaljiOdgovor(new ServerOdg("", operacije.Operacije.pobedio_komp));
+                }
+                sf.obavesti("pobedio komp");
+                return true;
             }
+            return false;
+    }
+
+    public void zatvoriSoket() {
+        for(ObradaZahteva o:klijenti)
+        {
+          o.setFlag(false);
+        if(o.getS()!=null && !o.getS().isClosed())
+        {
+            try {o.getS().close();} 
+            catch (IOException ex) {Logger.getLogger(ObradaZahteva.class.getName()).log(Level.SEVERE, null, ex);}
+        }
+        }
     }
     
 
