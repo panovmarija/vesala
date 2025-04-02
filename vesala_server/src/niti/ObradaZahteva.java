@@ -44,9 +44,8 @@ public class ObradaZahteva extends Thread{
                     pok++;
                     pog+=pogodjena_mesta.size();
                     k.postaviStatistiku(k.getKlijenti().indexOf(this),pok,pog);
-                    System.out.println(pog);
 //                    slanje odgovora klijentu  
-                    so.setOdg(pogodjena_mesta);//vraca indeks slova u reci, ako je pozicija vec pogodjena, vraca -1;
+                    so.setOdg(pogodjena_mesta);//vraca indeks slova u reci, ako je pozicija vec pogodjena ne dodaje je 
                     so.setOperacija(operacije.Operacije.pogadja_slovo);
                     posaljiOdgovor(so);
 //                    proverava da li ima pobednika, i ako ima prekida run oba klijenta i zatvara sokete
@@ -56,8 +55,16 @@ public class ObradaZahteva extends Thread{
                     throw new AssertionError();
             }
         }
+//        dodala jer sam videla da se ne gasi soket kad zatvorim klijet formu na x 
+        if(s!=null && !s.isClosed())
+        {
+            try {
+                s.close();
+            } catch (IOException ex) {
+                Logger.getLogger(ObradaZahteva.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
         System.out.println(s.isClosed()+" "+pog);
-        
     }
 
     public KlijentZahtev procitajZahtev() {

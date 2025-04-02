@@ -101,56 +101,52 @@ public class Kontroler {
     }
 
     public boolean nadjiPobednika() {
-            if(pogA==5 && pogB==5)
-            {
-                if(pokA==pokB)
-                {
-                    for (ObradaZahteva o : klijenti) {
-                        o.posaljiOdgovor(new ServerOdg("", operacije.Operacije.izjednaceno));
-                    }
+//        oba pogodila=>pobedio onaj koji je iz manje pokusaja
+        if (pogA == 5 && pogB == 5) {
+            if (pokA == pokB) {
+                for (ObradaZahteva o : klijenti) {
+                    o.posaljiOdgovor(new ServerOdg("", operacije.Operacije.izjednaceno));
+                }
                 sf.obavesti("izjednaceno");
-                }
-                if(pokA<pokB)
-                {
-                    for (ObradaZahteva o : klijenti) {
-                        o.posaljiOdgovor(new ServerOdg("", operacije.Operacije.pobedio_A));
-                    }
-                sf.obavesti("pobedio A");
-                }
-                if(pokA>pokB)
-                {
-                    for (ObradaZahteva o : klijenti) {
-                        o.posaljiOdgovor(new ServerOdg("", operacije.Operacije.pobedio_B));
-                    }
-                sf.obavesti("pobedio B");
-                }
-                return true;
             }
-            if(pogA==5&& pokB==10)
-            {
+            if (pokA < pokB) {
                 for (ObradaZahteva o : klijenti) {
                     o.posaljiOdgovor(new ServerOdg("", operacije.Operacije.pobedio_A));
                 }
                 sf.obavesti("pobedio A");
-                return true;
             }
-            if(pogB==5&& pokA==10)
-            {
+            if (pokA > pokB) {
                 for (ObradaZahteva o : klijenti) {
                     o.posaljiOdgovor(new ServerOdg("", operacije.Operacije.pobedio_B));
                 }
                 sf.obavesti("pobedio B");
-                return true;
             }
-            if(pokA==10 && pokB==10)
-            {
-                for (ObradaZahteva o : klijenti) {
-                    o.posaljiOdgovor(new ServerOdg("", operacije.Operacije.pobedio_komp));
-                }
-                sf.obavesti("pobedio komp");
-                return true;
+            return true;
+        }
+//        pobedio jedan
+        if (pogA == 5 && pokB == 10) {
+            for (ObradaZahteva o : klijenti) {
+                o.posaljiOdgovor(new ServerOdg("", operacije.Operacije.pobedio_A));
             }
-            return false;
+            sf.obavesti("pobedio A");
+            return true;
+        }
+        if (pogB == 5 && pokA == 10) {
+            for (ObradaZahteva o : klijenti) {
+                o.posaljiOdgovor(new ServerOdg("", operacije.Operacije.pobedio_B));
+            }
+            sf.obavesti("pobedio B");
+            return true;
+        }
+//        izbubili oboje
+        if (pokA == 10 && pokB == 10) {
+            for (ObradaZahteva o : klijenti) {
+                o.posaljiOdgovor(new ServerOdg("", operacije.Operacije.pobedio_komp));
+            }
+            sf.obavesti("pobedio komp");
+            return true;
+        }
+        return false;
     }
 
     public void zatvoriSoket() {

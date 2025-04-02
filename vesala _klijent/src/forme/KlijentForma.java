@@ -4,8 +4,11 @@
  */
 package forme;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import transfer.KlijentZahtev;
 
@@ -28,6 +31,7 @@ public class KlijentForma extends javax.swing.JFrame {
         slova=new LinkedList<>();
         jTextField_pokusana.setEnabled(false);
         jTextField_preostalibroj.setEnabled(false);
+        jButton1.setEnabled(false);
     }
 
     /**
@@ -54,14 +58,19 @@ public class KlijentForma extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jTextField2.setFont(new java.awt.Font("Segoe UI", 0, 25)); // NOI18N
+        jTextField2.setEnabled(false);
 
         jTextField3.setFont(new java.awt.Font("Segoe UI", 0, 25)); // NOI18N
+        jTextField3.setEnabled(false);
 
         jTextField4.setFont(new java.awt.Font("Segoe UI", 0, 25)); // NOI18N
+        jTextField4.setEnabled(false);
 
         jTextField5.setFont(new java.awt.Font("Segoe UI", 0, 25)); // NOI18N
+        jTextField5.setEnabled(false);
 
         jTextField1.setFont(new java.awt.Font("Segoe UI", 0, 25)); // NOI18N
+        jTextField1.setEnabled(false);
 
         jLabel1.setText("preostali broj pokusaja:");
 
@@ -149,9 +158,10 @@ public class KlijentForma extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        if(brpok==0 || brpog==5)
+        String s=jTextField_slovo.getText();
+        if(brpok==0 || brpog==5 || slova.contains(s.toUpperCase())||slova.contains(s.toLowerCase())||s==null || s.length()>1 ||s.isEmpty() || s.isBlank() || !s.matches("[A-Za-z]+"))
             return ;
-        komunikacija.Komunikacija.getInstance().posaljiZahtev(new KlijentZahtev(operacije.Operacije.pogadja_slovo, jTextField_slovo.getText()));
+        komunikacija.Komunikacija.getInstance().posaljiZahtev(new KlijentZahtev(operacije.Operacije.pogadja_slovo, s));
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
@@ -251,5 +261,11 @@ public class KlijentForma extends javax.swing.JFrame {
                 throw new AssertionError();
         }
     }
+
+    public void omoguci_pogadjanje() {
+        jButton1.setEnabled(true);
+    }
+
+    
 
 }

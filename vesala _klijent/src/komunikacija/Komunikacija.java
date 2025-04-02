@@ -65,6 +65,7 @@ public class Komunikacija extends Thread{
              switch (so.getOperacija()) {
                 case operacije.Operacije.pocela_igra:
                     kontroler.Kontroler.getInstance().getKf().obavesti("pocela igra");
+                    kontroler.Kontroler.getInstance().getKf().omoguci_pogadjanje();
                     break;
                 case operacije.Operacije.pogadja_slovo:
                     List<Integer>pogodjena_mesta= (List<Integer>) so.getOdg();
@@ -97,6 +98,10 @@ public class Komunikacija extends Thread{
         }
         System.out.println(s.isClosed());
         System.out.println("zatvoren soket");
+    }
+
+    public Socket getS() {
+        return s;
     }
     
     

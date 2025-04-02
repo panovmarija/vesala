@@ -8,9 +8,16 @@ import javax.swing.JOptionPane;
 import niti.ObradaZahteva;
 import niti.PokreniServer;
 import transfer.ServerOdg;
-
+//kreirati igricu vesala u kojoj ucestvuju 2 igraca i kompjuter, 
+//igraci treba da pogode rec koju je kompjuter zadao
+//kompjuter bira jednu od 5 unapred zadatih reci. svaka ima 5 slova
+//igraci imaju max 10 pokusaja da pogode rec. 
+//onaj koji pogodi iz manje pokusaja je pobedio. 
+//ako oba igraca ne pogode zadatu rec, kompjuter je pobedio. 
+//nakon zavrsetka igre svaki igrac treba da bude obavesten o tome ko je pobedio. 
+//igrac u svakom trenutku moze da vidi koja slova je iskoristio za pogadanje i koliko mu je pokusaja ostalo. 
 /**
- *
+/ *
  * @author USER
  */
 public class ServerForma extends javax.swing.JFrame {
@@ -27,7 +34,7 @@ public class ServerForma extends javax.swing.JFrame {
         izaberiRec();
         urediPolja();
         p=new PokreniServer();
-       p.start();
+        p.start();
     }
 
     /**
